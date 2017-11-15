@@ -1,0 +1,51 @@
+confusion matrix
+
+                predict true   |    predict false
+
+actual true     true positive  | false negative
+actual false    false positive | true negative
+
+accuracy
+--------
+ratio of correctly classified points / total points
+         correct / total
+
+accuracy problems:
+
+'all samples are true'   false ones get through
+'all samples are false'  true ones are rejected
+
+precision:
+----------
+    true positives / all positives
+    high precision = few false positives
+    good for avoiding false positives
+                predict true   |    predict false
+
+actual true     TRUE POSITIVE      | false negative
+actual false    FALSE POSITIVE (X) | true negative
+
+
+recall
+-------
+    true positives / true positive + false negative
+    high recall = few false negatives
+    good for avoiding false negatives
+
+                predict true   |    predict false
+
+actual true     TRUE POSITIVE  | FALSE NEGATIVE (X)
+actual false    false positive | true negative
+
+
+receiver operating characteristic
+---------------------------------
+
+area under roc curve
+perfect split  : 1.0
+good split     : 0.8
+random split   : 0.5  
+
+treu positive rate  = true pos / all pos
+
+false positive rate = false pos / all neg
