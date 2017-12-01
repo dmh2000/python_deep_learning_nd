@@ -1,0 +1,14 @@
+regression
+
+minimize absolute error
+minimize mean squared error
+    differentiable
+    emphasizes differences
+
+error = 1/2(y-y')^2
+
+dError/dW1 = -(y-y')x
+dError/dW2 = -(y-y')
+gradient step
+
+Wi -> Wi - alpha(dError/dWi)
