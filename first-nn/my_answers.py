@@ -1,5 +1,6 @@
+# %matplotlib inline
+# %config InlineBackend.figure_format = 'retina'
 import numpy as np
-
 
 class NeuralNetwork(object):
     def __init__(self, input_nodes, hidden_nodes, output_nodes, learning_rate):
@@ -48,14 +49,22 @@ class NeuralNetwork(object):
 
         '''
         #### Implement the forward pass here ####
-        ### Forward pass ###
-        # TODO: Hidden layer - Replace these values with your calculations.
-        hidden_inputs = np.matmul(self.weights_input_to_hidden, X)
+        # =========================
+        #  compute the hidden layer
+        # =========================
+
+        # sum over weights
+        hidden_inputs = X.dot(self.weights_input_to_hidden)
+        # reshape to (n,1)
+        # hidden_inputs = hidden_inputs.reshape((self.hidden_nodes, 1))
+        # apply the activation function
         hidden_outputs = self.activation_function(hidden_inputs)
 
-        # TODO: Output layer - Replace these values with your calculations.
-        final_inputs = np.matmul(self.weights_hidden_to_output, hidden_outputs)
-        final_outputs = np.sum(self.activation_function(final_inputs))
+        # =====================
+        #  compute output layer
+        # =====================
+        # multiply by weights
+        final_outputs = np.dot(hidden_outputs, self.weights_hidden_to_output)
 
         return final_outputs, hidden_outputs
 
@@ -73,21 +82,26 @@ class NeuralNetwork(object):
         #### Implement the backward pass here ####
         ### Backward pass ###
 
-        # TODO: Output error - Replace this value with your calculations.
-        error = None  # Output layer error is the difference between desired target and actual output.
+        # Output error (output gradient)
+        output_error = y - final_outputs  # Output layer error is the difference between desired target and actual output.
 
-        # TODO: Calculate the hidden layer's contribution to the error
-        hidden_error = None
+        # output error term
+        # output is a sum, not sigmoid, so derivative is 1
+        output_error_term = output_error
 
-        # TODO: Backpropagated error terms - Replace these values with your calculations.
-        output_error_term = None
+        # hidden error
+        hidden_error = np.dot(self.weights_hidden_to_output, output_error_term)
 
-        hidden_error_term = None
+        # hidden error term
+        hidden_prime = hidden_outputs * (1.0 - hidden_outputs)
+        hidden_error_term = hidden_error * hidden_prime
 
         # Weight step (input to hidden)
-        delta_weights_i_h += None
+        delta_weights_i_h += hidden_error_term * X[:, None]
+
         # Weight step (hidden to output)
-        delta_weights_h_o += None
+        delta_weights_h_o += (hidden_outputs * output_error_term).reshape((self.hidden_nodes,1))
+
         return delta_weights_i_h, delta_weights_h_o
 
     def update_weights(self, delta_weights_i_h, delta_weights_h_o, n_records):
@@ -100,8 +114,8 @@ class NeuralNetwork(object):
             n_records: number of records
 
         '''
-        self.weights_hidden_to_output += None  # update hidden-to-output weights with gradient descent step
-        self.weights_input_to_hidden += None  # update input-to-hidden weights with gradient descent step
+        self.weights_hidden_to_output += (self.lr * delta_weights_h_o)/n_records  # update hidden-to-output weights with gradient descent step
+        self.weights_input_to_hidden  += (self.lr * delta_weights_i_h)/n_records  # update input-to-hidden weights with gradient descent step
 
     def run(self, features):
         ''' Run a forward pass through the network with input features
@@ -113,20 +127,31 @@ class NeuralNetwork(object):
 
         #### Implement the forward pass here ####
 
-        # TODO: Hidden layer - Replace these values with your calculations.
-        hidden_inputs = np.matmul(self.weights_input_to_hidden, X)
+        # =========================
+        # compute the hidden layer
+        # =========================
+        # sum over weights
+        hidden_inputs = features.dot(self.weights_input_to_hidden)
+
+        # apply the activation function
         hidden_outputs = self.activation_function(hidden_inputs)
 
-        # TODO: Output layer - Replace these values with your calculations.
-        final_inputs = np.matmul(self.weights_hidden_to_output, hidden_outputs)
-        final_outputs = np.sum(self.activation_function(final_inputs))
+        # =========================
+        # compute the output layer
+        # =========================
+        # sum over the weights
+        final_outputs = np.dot(hidden_outputs, self.weights_hidden_to_output)
+
         return final_outputs
 
 
 #########################################################
 # Set your hyperparameters here
 ##########################################################
-iterations = 100
-learning_rate = 0.1
-hidden_nodes = 2
+#########################################################
+# Set your hyperparameters here
+##########################################################
+iterations = 5000
+learning_rate = 0.5
+hidden_nodes = 30
 output_nodes = 1
