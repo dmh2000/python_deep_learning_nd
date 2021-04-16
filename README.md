@@ -1,2 +1,3 @@
-# dlfnd
-deep learning foundation nanodegree
+# Udacity Deep Learning Nanodegree
+https://confirm.udacity.com/ESXKMLDY
+
